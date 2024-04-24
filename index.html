@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Average Particle Size Calculation</title>
+<style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-size: 28px;
+      margin-top: 40px;
+      margin-bottom: 10px;
+    }
+
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .table-container {
+      margin: 0 20px;
+    }
+
+    table {
+      margin: 0 auto;
+      border-collapse: collapse;
+      width: 600px;  
+      font-size: 24px;
+    }
+
+    th, td {
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    input[type="number"] {
+      width: 150px;
+      font-size: 24px;
+     
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 28px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    .result-table {
+      margin-top: 20px;
+      margin-bottom: 20px;
+      font-size: 24px;
+    }
+
+    .result-table th {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    .result-table td {
+      padding: 20px;
+    }
+
+    p {
+      font-size: 26px;
+    }
+
+    body {
+      font-size: 26px;    
+    }
+  </style>
+    <script type="text/javascript">
+        function createTable() {
+            var numGroups = parseInt(document.getElementById("numGroups").value);
+            var tableBody = document.getElementById("particleSizeTableBody");
+            tableBody.innerHTML = "";
+
+            for (var i = 0; i < numGroups; i++) {
+                var row = document.createElement("tr");
+
+                var openingCell = document.createElement("td");
+                var openingInput = document.createElement("input");
+                openingInput.type = "number";
+                openingInput.step = "0.01";
+                openingCell.appendChild(openingInput);
+
+                var weightCell = document.createElement("td");
+                var weightInput = document.createElement("input");
+                weightInput.type = "number";
+                weightCell.appendChild(weightInput);
+
+                var retainedCell = document.createElement("td");
+
+                var sizeCell = document.createElement("td");
+
+                row.appendChild(openingCell);
+                row.appendChild(weightCell);
+                row.appendChild(retainedCell);
+                row.appendChild(sizeCell);
+
+                tableBody.appendChild(row);
+            }
+        }
+
+        function calculateAverageParticleSize() {
+            var rows = document.querySelectorAll("#particleSizeTableBody tr");
+            var sumWeight = 0;
+            var sumSize = 0;
+
+            for (var i = 0; i < rows.length; i++) {
+                var row = rows[i];
+                var opening = parseFloat(row.cells[0].querySelector("input").value);
+                var weight = parseFloat(row.cells[1].querySelector("input").value);
+
+                if (!isNaN(opening) && !isNaN(weight)) {
+                    sumWeight += weight;
+                }
+            }
+
+            for (var i = 0; i < rows.length; i++) {
+                var row = rows[i];
+                var opening = parseFloat(row.cells[0].querySelector("input").value);
+                var weight = parseFloat(row.cells[1].querySelector("input").value);
+
+                if (!isNaN(opening) && !isNaN(weight)) {
+                    var retained = (weight / sumWeight) * 100;
+                    row.cells[2].innerHTML = retained.toFixed(3);
+
+                    var size = retained * opening;
+                    row.cells[3].innerHTML = size.toFixed(3);
+                    sumSize += size;
+                }
+            }
+
+            var averageParticleSize = sumSize / 100;
+
+            document.getElementById("result").innerHTML = "Average Particle Size: " + averageParticleSize.toFixed(3) + " mm";
+        }
+
+        function resetTable() {
+            var tableBody = document.getElementById("particleSizeTableBody");
+            tableBody.innerHTML = "";
+            document.getElementById("result").innerHTML = "";
+        }
+    </script>
+</head>
+<body>
+    <h1>Average Particle Size Calculation (sieving method)</h1>
+    <p>Enter the number of groups:</p>
+    <input type="number" id="numGroups" />
+    <button onclick="createTable()">Create Table</button>
+    <br><br>
+    <table id="particleSizeTable">
+        <thead>
+            <tr>
+                <th>Mean Opening (mm)</th>
+                <th>Weight Retained (gram)</th>
+                <th>% Retained</th>
+                <th>Size (mm)</th>
+            </tr>
+        </thead>
+        <tbody id="particleSizeTableBody">
+        </tbody>
+    </table>
+    <br>
+    <button onclick="calculateAverageParticleSize()">Calculate Average Particle Size</button>
+    <button onclick="resetTable()">Reset</button>
+    <p id="result"></p>
+</body>
+</html>
